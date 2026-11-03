@@ -10,6 +10,7 @@ import { TileModal } from './components/TileModal';
 import { SoundboardModal } from './components/SoundboardModal';
 import { VictoryModal } from './components/VictoryModal';
 import { DeckManagerModal } from './components/DeckManagerModal';
+import { AIControlPanel } from './components/AIControlPanel';
 import { BOLLYWOOD_STAGE_PACK, DEFAULT_TEAMS, GamePack } from './data/defaultPacks';
 import { TileData, Team, TwistExecutionResult, isGameOver } from './game/twistRules';
 import {
@@ -31,6 +32,8 @@ export default function App() {
   // Modals & Panels
   const [isSoundboardOpen, setIsSoundboardOpen] = useState<boolean>(false);
   const [isDeckModalOpen, setIsDeckModalOpen] = useState<boolean>(false);
+  const [isAIControlOpen, setIsAIControlOpen] = useState<boolean>(false);
+  const [isHostXrayActive, setIsHostXrayActive] = useState<boolean>(false);
   const [isVictoryOpen, setIsVictoryOpen] = useState<boolean>(false);
 
   // High-Energy Stage Toast Notification (e.g. for twists)
@@ -210,13 +213,13 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-400 selection:text-slate-950 relative overflow-x-hidden">
+    <div className="h-dvh max-h-dvh w-full bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-400 selection:text-slate-950 relative overflow-hidden max-md:h-auto max-md:min-h-screen max-md:overflow-y-auto">
       {/* Background Stage Atmosphere */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-gradient-to-b from-purple-900/15 via-rose-900/10 to-transparent blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-t from-amber-900/15 via-cyan-900/10 to-transparent blur-[120px]" />
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-gradient-to-b from-amber-500/10 via-amber-700/5 to-transparent blur-[140px]" />
+        <div className="absolute bottom-[-10%] left-1/3 w-[500px] h-[400px] bg-gradient-to-t from-purple-900/15 via-indigo-950/10 to-transparent blur-[130px]" />
         {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b08_1px,transparent_1px),linear-gradient(to_bottom,#1e293b08_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
       {/* STAGE HEADER & LIVE SCOREBOARD */}
@@ -228,55 +231,60 @@ export default function App() {
         onToggleFullscreen={handleToggleFullscreen}
         onOpenSoundboard={() => setIsSoundboardOpen(true)}
         onOpenDeckModal={() => setIsDeckModalOpen(true)}
+        onOpenAIControl={() => setIsAIControlOpen(true)}
         onEndGame={() => setIsVictoryOpen(true)}
         currentPackName={currentPack.name}
+        isHostXrayActive={isHostXrayActive}
       />
 
       {/* MAIN STAGE ARENA */}
-      <main className="relative z-10 flex-1 flex flex-col justify-center items-center py-2 sm:py-6">
+      <main className="relative z-10 flex-1 min-h-0 flex flex-col justify-center items-center px-2 py-1 sm:px-4 sm:py-1.5 md:py-2 overflow-hidden">
         <GridBoard
           tiles={tiles}
           teams={teams}
           onTileClick={handleTileClick}
           activeTeam={activeTeam}
+          isHostXrayActive={isHostXrayActive}
         />
       </main>
 
       {/* STAGE TOAST ANNOUNCEMENT */}
       {stageToast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 max-w-xl w-[92%] sm:w-auto animate-in slide-in-from-bottom-5 duration-300">
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 max-w-xl w-[92%] sm:w-auto animate-in slide-in-from-bottom-4 duration-300">
           <div
-            className={`px-6 py-3.5 rounded-2xl border text-center font-black text-sm sm:text-base shadow-2xl flex items-center justify-center gap-3 ${
+            className={`px-5 py-2.5 rounded-2xl border text-center font-semibold text-xs sm:text-sm shadow-2xl flex items-center justify-center gap-2.5 backdrop-blur-xl ${
               stageToast.type === 'twist'
-                ? 'bg-gradient-to-r from-purple-950 via-slate-900 to-rose-950 border-purple-500/80 text-purple-200 shadow-purple-900/50'
-                : 'bg-slate-900 border-amber-400 text-amber-300 shadow-amber-500/20'
+                ? 'bg-purple-950/90 border-purple-400/50 text-purple-200 shadow-purple-950/50'
+                : 'bg-slate-900/95 border-amber-400/50 text-amber-200 shadow-amber-950/50'
             }`}
           >
-            <Zap className="w-5 h-5 text-amber-400 shrink-0 animate-bounce" />
+            <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
             <span className="leading-snug">{stageToast.message}</span>
           </div>
         </div>
       )}
 
       {/* FOOTER CONTROLS & EVENT HOST QUICK HINTS */}
-      <footer className="w-full bg-slate-950/80 border-t border-slate-800/80 px-4 py-2 text-center text-xs text-slate-500 flex flex-wrap items-center justify-between gap-2 z-10">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-semibold text-slate-400">LED Stage Mode Active</span>
-          <span className="hidden md:inline text-slate-600">•</span>
-          <span className="hidden md:inline">Hotkeys: F (Fullscreen), C (Correct), W (Buzzer), T (Twist)</span>
+      <footer className="w-full shrink-0 bg-slate-950/95 border-t border-white/[0.06] px-4 py-1.5 text-center text-xs text-slate-500 flex flex-wrap items-center justify-between gap-2 z-10">
+        <div className="flex items-center gap-2 text-slate-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span className="font-medium text-slate-300">Stage Arena Active</span>
+          <span className="hidden md:inline text-slate-700">·</span>
+          <span className="hidden md:inline text-slate-500 text-[11px]">
+            Shortcuts: F (Fullscreen) · C (Chime) · W (Buzzer) · T (Twist)
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsDeckModalOpen(true)}
-            className="hover:text-amber-400 font-bold transition-colors"
+            className="hover:text-amber-300 text-slate-400 font-medium transition-colors cursor-pointer"
           >
             Customize Questions & Teams
           </button>
-          <span>•</span>
+          <span className="text-slate-700">·</span>
           <button
             onClick={handleResetBoard}
-            className="hover:text-rose-400 font-bold transition-colors"
+            className="hover:text-rose-400 text-slate-400 font-medium transition-colors cursor-pointer"
           >
             Reset Board
           </button>
@@ -320,6 +328,16 @@ export default function App() {
         teams={teams}
         onClose={() => setIsVictoryOpen(false)}
         onResetGame={handleResetBoard}
+      />
+
+      {/* ANCHOR AI CONTROL PANEL */}
+      <AIControlPanel
+        isOpen={isAIControlOpen}
+        onClose={() => setIsAIControlOpen(false)}
+        tiles={tiles}
+        onUpdateTiles={(updated) => setTiles(updated)}
+        isHostXrayActive={isHostXrayActive}
+        onToggleHostXray={() => setIsHostXrayActive((prev) => !prev)}
       />
     </div>
   );

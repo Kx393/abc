@@ -38,9 +38,10 @@ export interface TileData {
   points: number; // For normal trivia
   title: string;
   question: string;
-  visualClue?: string; // Hint or prop description
-  mediaType?: 'text' | 'image' | 'audio_cue';
+  visualClue?: string;
+  mediaType?: 'text' | 'image' | 'audio' | 'video' | 'audio_cue';
   mediaUrl?: string;
+  mediaTitle?: string;
   answer: string;
   extraNotes?: string;
   twist?: TwistConfig;

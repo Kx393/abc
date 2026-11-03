@@ -13,6 +13,7 @@ interface GridBoardProps {
   teams: Team[];
   onTileClick: (tile: TileData) => void;
   activeTeam: Team;
+  isHostXrayActive?: boolean;
 }
 
 const getCategoryIcon = (category: string) => {
@@ -41,6 +42,7 @@ export const GridBoard: React.FC<GridBoardProps> = ({
   teams,
   onTileClick,
   activeTeam,
+  isHostXrayActive = false,
 }) => {
   const handleSelect = (tile: TileData) => {
     playTileSelectSound();
@@ -48,34 +50,41 @@ export const GridBoard: React.FC<GridBoardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-4 flex flex-col items-center">
-      {/* Active Team Callout Banner */}
-      <div className="mb-4 flex items-center justify-between w-full max-w-2xl px-4 py-2 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-700/80 shadow-xl">
-        <div className="flex items-center gap-3">
+    <div className="w-full h-full max-w-5xl mx-auto flex flex-col items-center justify-center min-h-0 p-1 sm:p-2">
+      {/* Broadcast Active Turn Indicator */}
+      <div className="mb-2 sm:mb-2.5 flex items-center justify-between w-full max-w-xl px-4 py-1.5 sm:py-2 rounded-2xl bg-slate-900/80 border border-white/[0.08] backdrop-blur-md shadow-xl shrink-0">
+        <div className="flex items-center gap-2.5">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-lg font-bold shadow-md"
-            style={{ backgroundColor: `${activeTeam.color}33`, border: `2px solid ${activeTeam.color}` }}
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-sm sm:text-base font-bold shadow-md shrink-0"
+            style={{
+              backgroundColor: `${activeTeam.color}20`,
+              border: `1.5px solid ${activeTeam.color}70`,
+            }}
           >
             {activeTeam.avatarEmoji}
           </div>
-          <div>
-            <div className="text-[11px] font-black uppercase tracking-widest text-slate-400">
-              CURRENT TURN
-            </div>
-            <div className="text-sm sm:text-base font-black text-white flex items-center gap-2">
-              <span style={{ color: activeTeam.color }}>{activeTeam.name}</span>
-              <span className="text-slate-400 font-medium text-xs">selects a tile!</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+              Turn
+            </span>
+            <span className="text-slate-600 text-xs">·</span>
+            <span className="text-xs sm:text-sm font-semibold" style={{ color: activeTeam.color }}>
+              {activeTeam.name}
+            </span>
+            <span className="hidden sm:inline text-slate-400 text-xs font-normal">
+              selects a tile
+            </span>
           </div>
         </div>
-        <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-amber-300/90 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
-          <Zap className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
-          <span>Hidden Twists Await</span>
+
+        <div className="flex items-center gap-2 text-xs font-medium text-amber-300/80">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <span className="text-[11px] tracking-wide">Stage Matrix</span>
         </div>
       </div>
 
-      {/* 4x4 Stage Matrix */}
-      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:gap-5 w-full aspect-square max-h-[72vh] select-none">
+      {/* 4x4 Stage Matrix - Fits 100% inside viewport on laptops and desktops */}
+      <div className="grid grid-cols-4 gap-2 sm:gap-2.5 md:gap-3.5 w-full h-full max-h-[calc(100dvh-175px)] max-w-[min(100%,calc((100dvh-175px)*1.35))] select-none flex-1 min-h-0">
         {tiles.map((tile) => {
           const solvedTeam = tile.solvedByTeamId
             ? teams.find((t) => t.id === tile.solvedByTeamId)
@@ -85,78 +94,77 @@ export const GridBoard: React.FC<GridBoardProps> = ({
             <button
               key={tile.id}
               onClick={() => handleSelect(tile)}
-              className={`group relative rounded-2xl sm:rounded-3xl p-2 sm:p-3 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer overflow-hidden transform active:scale-95 ${
+              className={`group relative rounded-2xl sm:rounded-3xl p-2 sm:p-3 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer overflow-hidden transform active:scale-[0.98] ${
                 tile.isOpened
-                  ? 'bg-slate-900/60 border border-slate-800/80 shadow-inner opacity-75 hover:opacity-100 hover:border-slate-600'
-                  : 'bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border-2 border-amber-500/40 hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-500/30 hover:-translate-y-1'
+                  ? 'bg-slate-950/70 border border-white/[0.06] shadow-inner opacity-80 hover:opacity-100 hover:border-white/[0.15]'
+                  : 'bg-gradient-to-b from-slate-900/90 via-slate-900/60 to-slate-950/95 border border-amber-500/30 hover:border-amber-400/80 shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_28px_rgba(245,158,11,0.25)] hover:-translate-y-0.5'
               }`}
-              style={{
-                boxShadow: !tile.isOpened
-                  ? '0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 0 15px rgba(245, 158, 11, 0.12)'
-                  : undefined,
-              }}
               aria-label={`Tile ${tile.id} ${tile.isOpened ? 'Opened' : 'Unopened'}`}
             >
-              {/* Metallic corner rivets & stage border styling */}
-              <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-slate-600/50" />
-              <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-slate-600/50" />
-              <div className="absolute bottom-2 left-2 w-1.5 h-1.5 rounded-full bg-slate-600/50" />
-              <div className="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-slate-600/50" />
-
-              {/* Glowing animated background sheen on unopened */}
+              {/* Subtle top edge specular highlight */}
               {!tile.isOpened && (
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent pointer-events-none" />
               )}
 
               {/* TILE CONTENT */}
               {!tile.isOpened ? (
-                // UNOPENED: Big bold stage number
-                <div className="flex flex-col items-center justify-center">
-                  <span className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 drop-shadow-[0_4px_10px_rgba(245,158,11,0.3)] group-hover:scale-110 transition-transform">
-                    {tile.id}
+                // UNOPENED: Crisp, bold stage numeral with subtle glow
+                <div className="flex flex-col items-center justify-center relative w-full h-full min-h-0">
+                  {/* Host X-Ray Peek Indicator */}
+                  {isHostXrayActive && (
+                    <div className="absolute top-0.5 px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-semibold tracking-wider bg-purple-950/90 border border-purple-400/50 text-purple-300 shadow-sm flex items-center gap-1">
+                      <span>{tile.category === 'twist' ? 'TWIST' : tile.category.toUpperCase()}</span>
+                      {tile.mediaUrl && <span className="text-[10px]">📸</span>}
+                    </div>
+                  )}
+
+                  <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-amber-200 to-amber-500 drop-shadow-[0_2px_8px_rgba(245,158,11,0.25)] group-hover:scale-105 transition-transform duration-300 leading-none">
+                    {tile.id < 10 ? `0${tile.id}` : tile.id}
                   </span>
-                  <div className="mt-1 flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-                    <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300">
-                      LOCKED
+
+                  <div className="mt-1 sm:mt-1.5 flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                    <span className="text-[8px] sm:text-[9px] font-medium tracking-[0.2em] uppercase text-amber-200/80">
+                      {isHostXrayActive && tile.category === 'twist'
+                        ? tile.twist?.title || 'TWIST'
+                        : 'LOCKED'}
                     </span>
                   </div>
                 </div>
               ) : (
                 // OPENED / SOLVED
-                <div className="flex flex-col items-center justify-center text-center p-1">
-                  <div className="mb-1.5 p-2 rounded-xl bg-slate-800/80 border border-slate-700/60">
+                <div className="flex flex-col items-center justify-center text-center p-1 w-full h-full min-h-0 overflow-hidden">
+                  <div className="mb-1 p-1.5 rounded-xl bg-slate-900/90 border border-white/[0.08]">
                     {getCategoryIcon(tile.category)}
                   </div>
 
-                  <span className="text-xs sm:text-sm font-bold text-slate-300 line-clamp-1">
-                    {tile.category === 'twist' ? 'TWIST' : tile.title}
+                  <span className="text-[11px] sm:text-xs font-semibold text-slate-200 line-clamp-1 max-w-[90%]">
+                    {tile.category === 'twist' ? 'Twist of Fate' : tile.title}
                   </span>
 
                   {/* Stamp of solving team or twist badge */}
                   {tile.category === 'twist' ? (
-                    <span className="mt-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
-                      ⚡ TRIGGERED
-                    </span>
+                    <div className="mt-1 px-2 py-0.5 rounded-full text-[9px] font-semibold tracking-wider bg-purple-950/60 text-purple-300 border border-purple-500/40">
+                      Triggered
+                    </div>
                   ) : solvedTeam ? (
                     <div
-                      className="mt-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1 border shadow-sm"
+                      className="mt-1 px-2 py-0.5 rounded-full text-[9px] font-medium tracking-wide flex items-center gap-1 border"
                       style={{
-                        backgroundColor: `${solvedTeam.color}25`,
-                        borderColor: solvedTeam.color,
+                        backgroundColor: `${solvedTeam.color}15`,
+                        borderColor: `${solvedTeam.color}60`,
                         color: solvedTeam.color,
                       }}
                     >
-                      <CheckCircle2 className="w-3 h-3" />
-                      <span className="truncate max-w-[65px]">{solvedTeam.name}</span>
+                      <CheckCircle2 className="w-2.5 h-2.5" />
+                      <span className="truncate max-w-[60px] sm:max-w-[80px]">{solvedTeam.name}</span>
                     </div>
                   ) : (
-                    <span className="mt-1 text-[10px] font-semibold text-slate-500">
+                    <span className="mt-1 text-[9px] text-slate-500 font-medium">
                       Completed
                     </span>
                   )}
 
-                  <span className="text-[10px] text-slate-400 font-bold mt-0.5">
+                  <span className="text-[8px] text-slate-500 font-mono mt-1">
                     #{tile.id}
                   </span>
                 </div>

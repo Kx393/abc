@@ -16,8 +16,10 @@ interface ScoreboardProps {
   onToggleFullscreen: () => void;
   onOpenSoundboard: () => void;
   onOpenDeckModal: () => void;
+  onOpenAIControl: () => void;
   onEndGame: () => void;
   currentPackName: string;
+  isHostXrayActive: boolean;
 }
 
 export const Scoreboard: React.FC<ScoreboardProps> = ({
@@ -28,8 +30,10 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({
   onToggleFullscreen,
   onOpenSoundboard,
   onOpenDeckModal,
+  onOpenAIControl,
   onEndGame,
   currentPackName,
+  isHostXrayActive,
 }) => {
   const [muted, setMutedState] = React.useState(getIsMuted());
 
@@ -44,68 +48,91 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({
   const activeTeam = teams.find((t) => t.id === activeTeamId) || teams[0];
 
   return (
-    <div className="w-full bg-slate-950/95 border-b border-amber-500/30 backdrop-blur-md sticky top-0 z-30 shadow-2xl">
-      {/* Upper Control Bar: Brand & Host Tools */}
-      <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between border-b border-slate-800/80">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-rose-500 to-purple-600 p-[2px] shadow-md shadow-rose-500/20 shrink-0">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
-            </div>
+    <header className="shrink-0 w-full bg-slate-950/90 border-b border-white/[0.08] backdrop-blur-xl z-30 shadow-2xl">
+      {/* Upper Control Bar: Brand & Broadcast Host Tools */}
+      <div className="max-w-6xl mx-auto px-3 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between border-b border-white/[0.05]">
+        {/* Brand identity */}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400/20 via-amber-500/10 to-transparent border border-amber-400/40 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.15)] shrink-0">
+            <Sparkles className="w-4 h-4 text-amber-300" />
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] uppercase tracking-widest font-black text-amber-400/90">
-                STAGE HOST MATRIX
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-amber-400">
+                STAGEMASTER 16
               </span>
-              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                AI TWISTS ON
+              <span className="text-slate-600 text-[10px]">·</span>
+              <span className="text-[10px] text-slate-400 font-medium tracking-wide">
+                Live Session
               </span>
+              {isHostXrayActive && (
+                <>
+                  <span className="text-slate-600 text-[10px]">·</span>
+                  <span className="text-[10px] font-semibold text-purple-300 tracking-wider">
+                    X-RAY ACTIVE
+                  </span>
+                </>
+              )}
             </div>
-            <h1 className="text-xs sm:text-sm font-black text-white tracking-wide truncate max-w-[200px] sm:max-w-md">
+            <h1 className="text-xs sm:text-sm font-semibold text-slate-100 tracking-tight truncate max-w-[200px] sm:max-w-md">
               {currentPackName}
             </h1>
           </div>
         </div>
 
-        {/* Anchor Stage Quick Controls */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        {/* Host Quick Controls */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <button
+            onClick={onOpenAIControl}
+            title="Open AI Control Panel to edit questions & media"
+            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/40 border border-purple-500/30 hover:border-purple-400/60 text-purple-200 transition-all text-xs font-medium flex items-center gap-1.5 cursor-pointer shadow-sm"
+          >
+            <span className="text-purple-400 text-xs">✦</span>
+            <span className="hidden sm:inline">AI Studio</span>
+          </button>
+
           <button
             onClick={onOpenDeckModal}
             title="Change or Edit Themes"
-            className="px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-amber-400 text-slate-300 hover:text-white transition-all text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 border border-white/[0.08] hover:border-amber-400/50 text-slate-300 hover:text-white transition-all text-xs font-medium flex items-center gap-1.5 cursor-pointer"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline">Packs & Teams</span>
+            <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400/90" />
+            <span className="hidden sm:inline">Decks</span>
           </button>
+
           <button
             onClick={onOpenSoundboard}
             title="Stage SFX Soundboard"
-            className="px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-purple-400 text-slate-300 hover:text-white transition-all text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 border border-white/[0.08] hover:border-slate-600 text-slate-300 hover:text-white transition-all text-xs font-medium flex items-center gap-1.5 cursor-pointer"
           >
-            <span className="text-purple-400 text-xs">⚡</span>
-            <span className="hidden sm:inline">SFX</span>
+            <Zap className="w-3.5 h-3.5 text-amber-400/80" />
+            <span className="hidden sm:inline">Sound FX</span>
           </button>
+
+          <div className="h-4 w-px bg-white/10 mx-0.5" />
+
           <button
             onClick={handleToggleMute}
             title={muted ? 'Unmute SFX' : 'Mute SFX'}
-            className="p-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer"
+            className="p-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 border border-white/[0.08] text-slate-300 hover:text-white transition-all cursor-pointer"
             aria-label={muted ? 'Unmute audio' : 'Mute audio'}
           >
             {muted ? <VolumeX className="w-3.5 h-3.5 text-rose-400" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-400" />}
           </button>
+
           <button
             onClick={onToggleFullscreen}
             title="Toggle Big Screen Fullscreen (F)"
-            className="p-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer"
+            className="p-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 border border-white/[0.08] text-slate-300 hover:text-white transition-all cursor-pointer"
             aria-label="Toggle Fullscreen"
           >
             <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
           </button>
+
           <button
             onClick={onEndGame}
             title="End Game & Reveal Champions"
-            className="px-2.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-300 hover:bg-amber-500/20 transition-all text-xs font-bold flex items-center gap-1 cursor-pointer"
+            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 hover:border-amber-400/60 text-amber-300 transition-all text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
           >
             <Trophy className="w-3.5 h-3.5 text-amber-400" />
             <span className="hidden sm:inline">Podium</span>
@@ -113,9 +140,9 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({
         </div>
       </div>
 
-      {/* Lower Stage Scoreboard: Full-Width Prominent Team LED HUD */}
-      <div className="max-w-6xl mx-auto px-4 py-2.5">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+      {/* Lower Stage Scoreboard: Refined Team Stage Cards */}
+      <div className="max-w-6xl mx-auto px-3 sm:px-5 py-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           {teams.map((team) => {
             const isActive = team.id === activeTeamId;
             const isLeading = leader && leader.id === team.id && leader.score > 0;
@@ -124,76 +151,78 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({
               <div
                 key={team.id}
                 onClick={() => onSelectActiveTeam(team.id)}
-                className={`relative flex items-center justify-between p-2.5 rounded-2xl border transition-all cursor-pointer select-none ${
+                className={`relative flex items-center justify-between p-2 sm:p-2.5 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
                   isActive
-                    ? 'bg-slate-900 border-amber-400 shadow-xl shadow-amber-500/20 scale-[1.02]'
-                    : 'bg-slate-950/80 border-slate-800/90 hover:border-slate-700 opacity-90 hover:opacity-100'
+                    ? 'bg-slate-900/95 border-amber-400/80 shadow-[0_0_24px_rgba(245,158,11,0.18)] ring-1 ring-amber-400/30'
+                    : 'bg-slate-900/40 border-white/[0.06] hover:bg-slate-900/70 hover:border-white/[0.12]'
                 }`}
-                style={{
-                  boxShadow: isActive ? `0 0 20px ${team.color}40` : undefined,
-                }}
               >
-                {/* Active Indicator Top Tag */}
+                {/* Active Indicator Top Accent Bar */}
                 {isActive && (
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.2 text-[9px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 rounded-full shadow-md flex items-center gap-1">
-                    <Zap className="w-2.5 h-2.5 fill-current" />
-                    <span>Active Turn</span>
-                  </div>
+                  <div
+                    className="absolute top-0 left-3 right-3 h-[2px] rounded-full"
+                    style={{ backgroundColor: team.color }}
+                  />
                 )}
 
                 {/* Left: Avatar + Name */}
-                <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center text-lg font-bold shadow-inner shrink-0"
-                    style={{ backgroundColor: `${team.color}25`, border: `2px solid ${team.color}` }}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 transition-transform"
+                    style={{
+                      backgroundColor: `${team.color}18`,
+                      border: `1.5px solid ${team.color}60`,
+                    }}
                   >
                     <span>{team.avatarEmoji}</span>
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-1">
-                      <span className="text-xs sm:text-sm font-bold text-slate-100 truncate">
+                      <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate">
                         {team.name}
                       </span>
                       {isLeading && (
-                        <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" fill="currentColor" />
+                        <Crown className="w-3 h-3 text-amber-400 shrink-0" fill="currentColor" />
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-500 uppercase font-semibold">
-                      Table Score
+                    <span className="text-[9px] text-slate-400 font-medium tracking-wide uppercase">
+                      {isActive ? 'Turn Active' : 'Table'}
                     </span>
                   </div>
                 </div>
 
-                {/* Right: Big Numeric Score + Quick +/- Tweaks */}
+                {/* Right: Score + Precision +/- micro-steppers */}
                 <div className="flex items-center gap-1.5 shrink-0 pl-1">
                   <div className="text-right">
                     <span
-                      className="text-xl sm:text-2xl font-black tabular-nums tracking-tight"
+                      className="text-lg sm:text-xl font-bold tabular-nums tracking-tight block"
                       style={{ color: team.color }}
                     >
                       {team.score}
                     </span>
-                    <span className="text-[9px] uppercase font-bold text-slate-500 block -mt-1">
+                    <span className="text-[8px] uppercase tracking-wider text-slate-500 font-medium block -mt-1">
                       pts
                     </span>
                   </div>
 
-                  {/* Quick operator score adjust buttons (+10 / -10) */}
+                  {/* Micro Stepper */}
                   <div
-                    className="flex flex-col gap-0.5 ml-1"
+                    className="flex flex-col gap-0.5 ml-0.5"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <button
                       onClick={() => onAdjustScore(team.id, 10)}
                       title={`Add 10 pts to ${team.name}`}
-                      className="p-1 rounded bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white transition-colors"
+                      className="p-1 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-emerald-400 transition-colors"
+                      aria-label="Add 10 points"
                     >
                       <Plus className="w-2.5 h-2.5" />
                     </button>
                     <button
                       onClick={() => onAdjustScore(team.id, -10)}
                       title={`Deduct 10 pts from ${team.name}`}
-                      className="p-1 rounded bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white transition-colors"
+                      className="p-1 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-rose-400 transition-colors"
+                      aria-label="Deduct 10 points"
                     >
                       <Minus className="w-2.5 h-2.5" />
                     </button>
@@ -204,6 +233,6 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({
           })}
         </div>
       </div>
-    </div>
+    </header>
   );
 };

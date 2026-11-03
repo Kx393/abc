@@ -59,72 +59,73 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in zoom-in-95 duration-200">
-      <div className="relative w-full max-w-2xl rounded-3xl bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 border-2 border-amber-500/60 p-6 sm:p-8 shadow-2xl text-center space-y-6 overflow-hidden">
-        {/* Glow backdrop */}
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-950 border border-white/[0.1] p-6 sm:p-8 shadow-[0_0_60px_rgba(245,158,11,0.15)] text-center space-y-5">
+        {/* Subtle radial backdrop glow */}
+        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+          className="absolute top-4 right-4 p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer border border-white/[0.08]"
           aria-label="Close victory modal"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
-        {/* Top Celebration Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs sm:text-sm font-black tracking-widest uppercase">
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          GRAND STAGE CHAMPIONS REVEAL
-          <Sparkles className="w-4 h-4 text-amber-400" />
+        {/* Top Celebration Subtitle */}
+        <div className="flex items-center justify-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-300">
+            Final Standings · Podium
+          </span>
         </div>
 
         {/* Champion Trophy Showcase */}
         {winner && (
-          <div className="space-y-3">
+          <div className="space-y-3 pt-1">
             <div className="relative inline-block">
               <div
-                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-3xl flex items-center justify-center text-4xl sm:text-5xl border-4 shadow-2xl"
+                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-2xl flex items-center justify-center text-4xl sm:text-5xl border shadow-xl"
                 style={{
-                  backgroundColor: `${winner.color}30`,
-                  borderColor: winner.color,
-                  boxShadow: `0 0 35px ${winner.color}66`,
+                  backgroundColor: `${winner.color}18`,
+                  borderColor: `${winner.color}80`,
+                  boxShadow: `0 0 35px ${winner.color}35`,
                 }}
               >
                 {winner.avatarEmoji}
               </div>
-              <Crown className="w-10 h-10 text-amber-400 absolute -top-4 -right-3 rotate-12 drop-shadow-lg animate-bounce" fill="currentColor" />
+              <Crown className="w-8 h-8 text-amber-400 absolute -top-3 -right-2 rotate-12 drop-shadow-md" fill="currentColor" />
             </div>
 
             <div>
-              <div className="text-xs font-black uppercase tracking-widest text-amber-400">
-                1ST PLACE • GRAND CHAMPION
+              <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-400/90">
+                Champion
               </div>
-              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-1">
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-100 tracking-tight mt-0.5">
                 {winner.name}
               </h2>
-              <div className="text-2xl sm:text-3xl font-black text-amber-400 mt-1 tabular-nums">
-                {winner.score} <span className="text-sm font-bold text-slate-400">POINTS</span>
+              <div className="text-xl sm:text-2xl font-bold text-amber-300 mt-0.5 tabular-nums">
+                {winner.score} <span className="text-xs font-semibold uppercase text-slate-400">pts</span>
               </div>
             </div>
           </div>
         )}
 
         {/* 3-Step Podium */}
-        <div className="flex items-end justify-center gap-3 pt-4 max-w-md mx-auto">
+        <div className="flex items-end justify-center gap-3 pt-2 max-w-sm mx-auto">
           {/* 2nd Place */}
           {runnerUp && (
             <div className="flex-1 flex flex-col items-center">
-              <span className="text-xl mb-1">{runnerUp.avatarEmoji}</span>
-              <span className="text-xs font-bold text-slate-300 truncate max-w-[80px]">
+              <span className="text-lg mb-1">{runnerUp.avatarEmoji}</span>
+              <span className="text-xs font-semibold text-slate-300 truncate max-w-[80px]">
                 {runnerUp.name}
               </span>
-              <span className="text-xs font-black text-slate-400 tabular-nums">
+              <span className="text-xs font-bold text-slate-400 tabular-nums">
                 {runnerUp.score} pts
               </span>
-              <div className="w-full h-20 bg-slate-800 rounded-t-2xl border-t-2 border-slate-400 flex flex-col items-center justify-center mt-2 shadow-lg">
-                <Medal className="w-6 h-6 text-slate-300" />
-                <span className="text-xs font-black text-slate-300">2ND</span>
+              <div className="w-full h-18 bg-slate-900 rounded-t-xl border-t border-slate-400 flex flex-col items-center justify-center mt-2 shadow-sm">
+                <Medal className="w-5 h-5 text-slate-400" />
+                <span className="text-[10px] font-bold text-slate-400 mt-0.5">2ND</span>
               </div>
             </div>
           )}
@@ -132,16 +133,16 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
           {/* 1st Place */}
           {winner && (
             <div className="flex-1 flex flex-col items-center">
-              <span className="text-2xl mb-1">{winner.avatarEmoji}</span>
+              <span className="text-xl mb-1">{winner.avatarEmoji}</span>
               <span className="text-xs font-bold text-amber-300 truncate max-w-[90px]">
                 {winner.name}
               </span>
-              <span className="text-xs font-black text-amber-400 tabular-nums">
+              <span className="text-xs font-bold text-amber-400 tabular-nums">
                 {winner.score} pts
               </span>
-              <div className="w-full h-28 bg-gradient-to-t from-amber-600 to-amber-400 rounded-t-2xl border-t-2 border-amber-300 flex flex-col items-center justify-center mt-2 shadow-2xl shadow-amber-500/30">
-                <Trophy className="w-8 h-8 text-slate-950" />
-                <span className="text-xs font-black text-slate-950 uppercase tracking-wider">
+              <div className="w-full h-24 bg-gradient-to-t from-amber-500/20 to-amber-500/10 rounded-t-xl border-t-2 border-amber-400 flex flex-col items-center justify-center mt-2 shadow-lg shadow-amber-500/10">
+                <Trophy className="w-6 h-6 text-amber-400" />
+                <span className="text-[10px] font-bold text-amber-300 tracking-wider mt-0.5">
                   1ST
                 </span>
               </div>
@@ -151,34 +152,34 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
           {/* 3rd Place */}
           {thirdPlace && (
             <div className="flex-1 flex flex-col items-center">
-              <span className="text-xl mb-1">{thirdPlace.avatarEmoji}</span>
-              <span className="text-xs font-bold text-slate-300 truncate max-w-[80px]">
+              <span className="text-lg mb-1">{thirdPlace.avatarEmoji}</span>
+              <span className="text-xs font-semibold text-slate-300 truncate max-w-[80px]">
                 {thirdPlace.name}
               </span>
-              <span className="text-xs font-black text-slate-400 tabular-nums">
+              <span className="text-xs font-bold text-slate-400 tabular-nums">
                 {thirdPlace.score} pts
               </span>
-              <div className="w-full h-16 bg-slate-800/80 rounded-t-2xl border-t-2 border-amber-800 flex flex-col items-center justify-center mt-2 shadow-md">
-                <span className="text-xs font-black text-amber-700">3RD</span>
+              <div className="w-full h-14 bg-slate-900/80 rounded-t-xl border-t border-amber-800 flex flex-col items-center justify-center mt-2 shadow-sm">
+                <span className="text-[10px] font-bold text-amber-700">3RD</span>
               </div>
             </div>
           )}
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-center gap-3 pt-2">
+        <div className="flex items-center justify-center gap-3 pt-3">
           <button
             onClick={onResetGame}
-            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-slate-950 font-black text-sm sm:text-base flex items-center gap-2 shadow-xl shadow-amber-500/20 cursor-pointer"
+            className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-amber-400/20 transition-all cursor-pointer"
           >
-            <RotateCcw className="w-4 h-4" />
-            Play Again / New Game
+            <RotateCcw className="w-3.5 h-3.5" />
+            New Game
           </button>
           <button
             onClick={onClose}
-            className="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm"
+            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/[0.08] text-slate-300 font-semibold text-xs sm:text-sm transition-colors cursor-pointer"
           >
-            Review Board
+            Review Matrix
           </button>
         </div>
       </div>
